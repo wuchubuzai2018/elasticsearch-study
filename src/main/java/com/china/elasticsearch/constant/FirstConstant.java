@@ -6,4 +6,9 @@ package com.china.elasticsearch.constant;
 public class FirstConstant {
 
     public static final String SUCCESS = "success";
+
+    public static final String FIRSTBOOK_INDEXNAME = "firstbook";
+
+    public static final String FIRSTBOOK_TYPE = "_doc";
+
 }
