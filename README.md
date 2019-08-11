@@ -1,7 +1,9 @@
-# ElasticSearch学习
+# 基于ElasticSearch6.8.2学习
 
 ## 描述
-基于Docker环境运行的ElasticSearch6.8.2,使用Spring Data ElasticSearch3.1.10版本进行操作
+基于Docker环境运行的ElasticSearch6.8.2,目前项目中集成了2种Java API:
+1. 使用Spring Data ElasticSearch 3.1.10
+2. 使用Rest High Level Client 6.8.2
 
 
 ## 技术架构
@@ -13,8 +15,9 @@
 5. ElasticSearch 6.8.2
 6. Spring Data ElasticSearch 3.1.10
 7. Docker 18.09.1
+8. Rest High Level Client 6.8.2
 
-## 运行
+## 启动ElasticSearch服务
 
 拉取ElasticSearch镜像
 ````
@@ -26,6 +29,12 @@ docker pull elasticsearch:6.8.2
 docker run -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -d -p 9200:9200 -p 9300:9300 --name study_es6 dbf758a9f11b
 ````
 注意：该命令输入时未指定集群的名称，所以默认的名称为：docker-cluster，需要与项目中的application.yml文件中配置的一致
+
+
+## 更改配置并启动
+
+1. 对于使用ElasticSearchTemplate的修改application.yml文件
+2. 对于使用Rest High Level Client的修改HighLevelClientController.java文件
 
 执行StartMainApplication.java文件
 
@@ -61,9 +70,19 @@ docker run -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -d -p 9200:9200 -p 9300:9300 --na
 2019-08-10 12:53:13.498  INFO 11904 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 7071 (http) with context path ''
 2019-08-10 12:53:13.500  INFO 11904 --- [  restartedMain] c.c.elasticsearch.StartMainApplication   : Started StartMainApplication in 3.24 seconds (JVM running for 3.912)
 
-
 ````
 
+## 测试访问
 
+1. 对于使用ElasticSearchTemplate的:
+````
+http://localhost:7071/es/saveBook
+...
+````
+2. 对于使用RestHighLevelClient的:
+````
+http://localhost:7071/highlevel/save
+...
+````
 
 
