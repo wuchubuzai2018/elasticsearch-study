@@ -9,6 +9,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.rest.RestStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,34 +28,34 @@ import java.util.Map;
 @RequestMapping("highlevel")
 public class HighLevelClientController {
 
+    @Autowired
     public RestHighLevelClient client;
 
 //    @PostConstruct
-    public void init(){
-        client = new RestHighLevelClient(
-                RestClient.builder(
-                        new HttpHost("127.0.0.1", 9200, "http")
-                ));
-        System.out.println("init success--------------------");
-    }
+//    public void init(){
+//        client = new RestHighLevelClient(
+//                RestClient.builder(
+//                        new HttpHost("127.0.0.1", 9200, "http")
+//                ));
+//        System.out.println("init success--------------------");
+//    }
 
 //    @PreDestroy
-    public void close(){
-        try{
-            if(client != null){
-                client.close();
-                System.out.println("destory--------------------");
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+//    public void close(){
+//        try{
+//            if(client != null){
+//                client.close();
+//                System.out.println("destory--------------------");
+//            }
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * 保存操作
      */
     public void save(){
-        init();
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("userId", "002");
         jsonMap.put("user", "的实打实的方式");
@@ -78,7 +79,6 @@ public class HighLevelClientController {
             }
 
         }
-        close();
     }
 
     @RequestMapping("/save")

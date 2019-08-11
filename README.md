@@ -33,8 +33,7 @@ docker run -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -d -p 9200:9200 -p 9300:9300 --na
 
 ## 更改配置并启动
 
-1. 对于使用ElasticSearchTemplate的修改application.yml文件
-2. 对于使用Rest High Level Client的修改HighLevelClientController.java文件
+1. 对于使用ElasticSearchTemplate与Rest High Level Client的修改application.yml文件
 
 执行StartMainApplication.java文件
 
