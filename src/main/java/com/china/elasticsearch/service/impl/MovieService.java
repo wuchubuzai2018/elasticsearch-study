@@ -61,4 +61,8 @@ public class MovieService implements IMovieService {
         }
         movieDao.saveBatch(list);
     }
+
+    public List<MovieEntity> getAllMovie(){
+        return (List<MovieEntity>)movieDao.queryForList(MovieEntity.class);
+    }
 }

@@ -16,6 +16,7 @@
 6. Spring Data ElasticSearch 3.1.10
 7. Docker 18.09.1
 8. Rest High Level Client 6.8.2
+9. Vue+Element UI+Axios
 
 ## 启动ElasticSearch服务
 
@@ -73,15 +74,20 @@ docker run -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -d -p 9200:9200 -p 9300:9300 --na
 
 ## 测试访问
 
-1. 对于使用ElasticSearchTemplate的:
+1. 对于测试使用ElasticSearchTemplate的:
 ````
 http://localhost:7071/es/saveBook
 ...
 ````
-2. 对于使用RestHighLevelClient的:
+2. 对于测试使用RestHighLevelClient的:
 ````
 http://localhost:7071/highlevel/save
 ...
 ````
-
-
+3. 对于访问主页面的(目前前端实现查询操作):
+````
+http://localhost:7071/
+...
+````
+## 目前效果图
+![Image text](./images/t1.png)

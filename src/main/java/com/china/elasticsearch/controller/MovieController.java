@@ -1,5 +1,6 @@
 package com.china.elasticsearch.controller;
 
+import com.china.elasticsearch.bean.MovieEntity;
 import com.china.elasticsearch.service.IMovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +44,16 @@ public class MovieController {
     public Map<String,Object> saveBatchMovie() {
         Map<String,Object> rMap = new HashMap<String,Object>();
         movieService.saveBatchMovie();
+        rMap.put("success",true);
+        return rMap;
+    }
+
+    @RequestMapping("/getAllMovie")
+    @ResponseBody
+    public Map<String,Object> getAllMovie() {
+        Map<String,Object> rMap = new HashMap<String,Object>();
+        List<MovieEntity> list = movieService.getAllMovie();
+        rMap.put("list",list);
         rMap.put("success",true);
         return rMap;
     }

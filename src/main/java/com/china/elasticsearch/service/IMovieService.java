@@ -1,5 +1,9 @@
 package com.china.elasticsearch.service;
 
+import com.china.elasticsearch.bean.MovieEntity;
+
+import java.util.List;
+
 /**
  * @date 2019-08-17
  */
@@ -9,4 +13,5 @@ public interface IMovieService {
 
     public void saveBatchMovie();
 
+    public List<MovieEntity> getAllMovie();
 }

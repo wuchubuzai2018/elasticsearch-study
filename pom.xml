@@ -83,6 +83,23 @@
                 </configuration>
             </plugin>
         </plugins>
+        <!--配置资源,防止加载不到字体图标-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>static/js/element-ui/fonts/*</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>static/js/*</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 
 </project>

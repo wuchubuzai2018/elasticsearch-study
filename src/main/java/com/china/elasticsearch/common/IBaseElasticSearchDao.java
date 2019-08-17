@@ -19,4 +19,7 @@ public interface IBaseElasticSearchDao {
      * @param objectList
      */
     public void saveBatch(List<Object> objectList);
+
+
+    public List<?> queryForList(Class<?> entityClass);
 }
