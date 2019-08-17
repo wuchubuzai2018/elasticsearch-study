@@ -19,7 +19,7 @@ import java.util.*;
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 
 /**
- * ElasticSearch 基本操作的例子
+ * 使用ElasticSearchTemplate操作的控制器
  * @date 2019-08-10
  */
 @Controller

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 高级别客户端控制器
+ * 使用高级别客户端的控制器
  * 2019-08-11
  */
 @Controller

@@ -8,3 +8,9 @@ spring:
   elasticsearch:
     rest:
       uris: http://127.0.0.1:9200
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,WEB-INF/**
+

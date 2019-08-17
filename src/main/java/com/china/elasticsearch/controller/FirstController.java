@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 用于测试Spring Boot的控制器
  * @date 2019-08-10
  */
 @Controller
