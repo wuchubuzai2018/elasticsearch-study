@@ -1,9 +1,12 @@
 package com.china.elasticsearch.service.impl;
 
 import com.china.elasticsearch.bean.MovieEntity;
+import com.china.elasticsearch.bean.PageEntity;
 import com.china.elasticsearch.dao.IMovieDao;
 import com.china.elasticsearch.service.IMovieService;
+import com.china.elasticsearch.util.MovieDownloadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -62,7 +65,36 @@ public class MovieService implements IMovieService {
         movieDao.saveBatch(list);
     }
 
+    @Override
+    public void startDownloadMovie(){
+        System.out.println("--------------准备开始爬取--------------");
+        List<MovieEntity> list = MovieDownloadUtil.startGetMovies();
+        System.out.println("--------------爬取完成--------------");
+        movieDao.saveBatch(list);
+        System.out.println("--------------保存完成--------------");
+    }
+
+    @Override
+    public PageEntity getAllMovieForPage(int page, int pageSize) {
+        Page pageInfo = movieDao.queryForPage(page,pageSize,MovieEntity.class);
+        PageEntity entity = new PageEntity();
+        entity.setDataList(pageInfo.getContent());
+        entity.setTotalCount(pageInfo.getTotalElements());
+        entity.setTotalPage(pageInfo.getTotalPages());
+        return entity;
+    }
+
+
+    @Override
     public List<MovieEntity> getAllMovie(){
         return (List<MovieEntity>)movieDao.queryForList(MovieEntity.class);
     }
+
+
+    @Override
+    public void deleteAllMovie(){
+        movieDao.deleteAll(MovieEntity.class);
+    }
+
+
 }

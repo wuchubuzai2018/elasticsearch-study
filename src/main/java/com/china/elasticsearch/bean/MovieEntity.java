@@ -33,7 +33,7 @@ public class MovieEntity implements Serializable {
     /**导演*/
     private String director;
 
-    /**上映日期*/
+    /**上映日期,暂时无法获取*/
     private String releaseDate;
 
     /**豆瓣评分*/
@@ -44,6 +44,12 @@ public class MovieEntity implements Serializable {
 
     /**年份*/
     private int year;
+
+    /**提示*/
+    private String tip;
+
+    /**片长*/
+    private int minute;
 
 
     public String getMovieId() {
@@ -124,5 +130,21 @@ public class MovieEntity implements Serializable {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public String getTip() {
+        return tip;
+    }
+
+    public void setTip(String tip) {
+        this.tip = tip;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
     }
 }

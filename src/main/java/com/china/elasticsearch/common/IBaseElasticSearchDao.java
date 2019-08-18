@@ -1,5 +1,7 @@
 package com.china.elasticsearch.common;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 /**
@@ -18,8 +20,26 @@ public interface IBaseElasticSearchDao {
      * 批量保存
      * @param objectList
      */
-    public void saveBatch(List<Object> objectList);
+    public void saveBatch(List<?> objectList);
 
-
+    /**
+     * 查询所有数据
+     * @param entityClass
+     * @return
+     */
     public List<?> queryForList(Class<?> entityClass);
+
+
+    /**
+     * 分页查询数据
+     * @param entityClass
+     * @return
+     */
+    public Page<?> queryForPage(int curPage, int pageSize, Class<?> entityClass);
+
+    /**
+     * 删除索引中的数据
+     * @param entityClass
+     */
+    public void deleteAll(Class<?> entityClass);
 }

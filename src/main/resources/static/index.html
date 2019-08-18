@@ -26,28 +26,40 @@
                 <el-main>
                     <el-row>
                         <el-alert title="进度" type="info"
-                                  description="目前实现前端的查询,后端的保存等" show-icon>
+                                  description="目前实现爬取80s上的电影信息、分页查询、全部删除(暂时不清楚如何删除全部数据,底层好像有限制)" show-icon>
                         </el-alert>
                     </el-row>
                     <el-row>
-                        <el-button type="primary" size="mini" @click="queryData">查询</el-button>
-                        <el-button type="primary" size="mini">增加</el-button>
-                        <el-button type="primary" size="mini">修改</el-button>
-                        <el-button type="primary" size="mini">删除</el-button>
-                        <el-button type="primary" size="mini">开始爬取</el-button>
+                        <el-button type="primary" size="mini" @click="queryDataForPage">查询</el-button>
+                        <el-button type="primary" size="mini" @click="startGetMovie">开始爬取</el-button>
+                        <el-button type="primary" size="mini" @click="deleteAllMovie">删除所有</el-button>
                     </el-row>
-                    <el-table size="mini" :data="tableData" style="width: 100%" height="500">
+                    <el-table size="mini" :data="tableData" style="width: 100%" height="450" stripe border>
                         <el-table-column prop="movieId" label="电影ID" width="70"></el-table-column>
                         <el-table-column prop="movieName" label="电影名称" width="150"></el-table-column>
-                        <el-table-column prop="type" label="类型" width="50"></el-table-column>
-                        <el-table-column prop="area" label="地区" width="50"></el-table-column>
-                        <el-table-column prop="director" label="导演" width="150"></el-table-column>
-                        <el-table-column prop="releaseDate" label="上映日期" width="120"></el-table-column>
+                        <el-table-column prop="tip" label="提示" width="200"></el-table-column>
+                        <el-table-column prop="type" label="类型" width="150"></el-table-column>
+                        <el-table-column prop="area" label="地区" width="100"></el-table-column>
+                        <el-table-column prop="director" label="导演" width="200" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="year" label="年份" width="80"></el-table-column>
+                        <el-table-column prop="minute" label="时长" width="80"></el-table-column>
                         <el-table-column prop="score" label="豆瓣评分" width="100"></el-table-column>
                         <el-table-column prop="language" label="语言" width="150"></el-table-column>
                         <el-table-column prop="year" label="年份" width="80"></el-table-column>
-                        <el-table-column prop="actors" label="演员" ></el-table-column>
+                        <el-table-column prop="actors" label="演员" width="1000"  show-overflow-tooltip></el-table-column>
                     </el-table>
+                    <div style="text-align: right;">
+                        <el-pagination
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                :current-page="currentPage"
+                                :page-sizes="[10,50,100, 200, 300, 400]"
+                                :page-size="pageSize"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="totalCount">
+                        </el-pagination>
+                    </div>
+                   
                 </el-main>
             </el-container>
         </div>
@@ -60,7 +72,10 @@
                 tableData:[],
                 showlist : true,
                 activeIndex: '1',
-                activeIndex2: '1'
+                activeIndex2: '1',
+                totalCount:0,
+                currentPage:1,
+                pageSize:10
             },
             methods : {
                 add:function(){
@@ -79,6 +94,60 @@
                        if(response && response.data && response.data.success){
                            self.tableData = response.data.list;
                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                queryDataForPage:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/movie/getAllMovieForPage";
+                    var params = "page=" + this.currentPage + "&pageSize=" + this.pageSize;
+                    axios.post(url,params).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            var page = response.data.page;
+                            self.tableData = page["dataList"];
+                            self.totalCount = page["totalCount"];
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                startGetMovie:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/movie/startDownloadMovie";
+                    axios.post(url).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            self.$message("后台处理中,稍后刷新页面!");
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                handleSizeChange:function(val){
+                    this.pageSize = val;
+                    this.queryDataForPage();
+                },
+                handleCurrentChange:function(val){
+                    this.currentPage = val;
+                    this.queryDataForPage();
+                },
+                deleteAllMovie:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/movie/deleteAllMovie";
+                    axios.post(url).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            self.$message("删除成功!");
+                            setTimeout(self.queryDataForPage(),500);
+                        }
                     }).catch(function (error) {
                         self.vloading = false;
                         console.log(error);

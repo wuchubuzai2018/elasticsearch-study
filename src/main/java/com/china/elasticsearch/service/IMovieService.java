@@ -1,6 +1,7 @@
 package com.china.elasticsearch.service;
 
 import com.china.elasticsearch.bean.MovieEntity;
+import com.china.elasticsearch.bean.PageEntity;
 
 import java.util.List;
 
@@ -14,4 +15,10 @@ public interface IMovieService {
     public void saveBatchMovie();
 
     public List<MovieEntity> getAllMovie();
+
+    public void startDownloadMovie();
+
+    public PageEntity getAllMovieForPage(int page, int pageSize);
+
+    public void deleteAllMovie();
 }
