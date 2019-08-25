@@ -1,16 +1,22 @@
 # 基于ElasticSearch6.8.2学习
 
+## 项目描述
+基于Docker环境运行的ElasticSearch6.8.2,目前项目中集成了2种Java API:
+1. 使用Spring Data ElasticSearch 3.1.10
+2. 使用Rest High Level Client 6.8.2
+
+项目暂时未使用脚手架的方式开发Vue前端界面,采用了原始的方式进行开发
+
+
 ## 计划及实现
-目前计划从80s网站上进行爬虫，爬取电影信息，然后存储到ES中，并实现先关操作
+目前计划从80s网站上进行爬虫，爬取电影信息，然后存储到ES中，并实现相关操作
 目前实现：
 1. 从80s网站爬虫电影信息
 2. 页面的分页查询操作
 3. 全部删除操作(底层可能只会删除1000条,有待研究)
-
-## 描述
-基于Docker环境运行的ElasticSearch6.8.2,目前项目中集成了2种Java API:
-1. 使用Spring Data ElasticSearch 3.1.10
-2. 使用Rest High Level Client 6.8.2
+待计划：
+1、从猫眼电影票房信息上进行爬虫
+2、80s模块的一些基本操作
 
 
 ## 技术架构
@@ -23,7 +29,7 @@
 6. Spring Data ElasticSearch 3.1.10
 7. Docker 18.09.1
 8. Rest High Level Client 6.8.2
-9. Vue2.6 + Element UI 2.11.1 +Axios
+9. Vue2.6 + Vue Router + Element UI 2.11.1 +Axios
 
 ## 启动ElasticSearch服务
 
