@@ -8,6 +8,9 @@ spring:
   elasticsearch:
     rest:
       uris: http://127.0.0.1:9200
+    jest:
+      uris: http://127.0.0.1:9200
+      read-timeout: 5000
   devtools:
     restart:
       enabled: true

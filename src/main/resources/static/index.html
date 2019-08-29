@@ -29,10 +29,10 @@
         <div id="app">
             <el-container>
                 <el-header class="top">
-                    Vue + ElasticSearch + Spring Boot主页面(v20190825)
+                    Vue + ElasticSearch + Spring Boot主页面(v20190829)
                 </el-header>
                 <el-container>
-                    <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+                    <el-aside width="250px" style="background-color: rgb(238, 241, 246)">
                         <el-menu
                                 :default-active="actionIndex"
                                 class="el-menu-vertical-demo"
@@ -40,12 +40,15 @@
                                 active-text-color="#ffd04b"
                                 @select="menuSelect">
                             <el-menu-item index="/p1">
-                                80S电影网站爬虫
+                                使用Spring Data API电影网站爬虫
+                            </el-menu-item>
+                            <el-menu-item index="/p3">
+                                使用Jest API电影网站爬虫
                             </el-menu-item>
                             <el-menu-item index="/p2" >
                                 猫眼电影票房爬虫
                             </el-menu-item>
-                            <el-menu-item index="/p3" >
+                            <el-menu-item index="/p4" >
                                 其他爬虫
                             </el-menu-item>
                         </el-menu>
@@ -170,6 +173,111 @@
                     }
                 };
 
+        var jestmovie = {
+            template :'<div v-loading="vloading"><el-row>\n' +
+                '                            <el-alert title="进度" type="info"\n' +
+                '                                      description="基于Jest API实现爬取80s上的电影信息爬虫" show-icon>\n' +
+                '                            </el-alert>\n' +
+                '                        </el-row>\n' +
+                '                        <el-row style="height:40px;line-height:40px;text-align: right;">\n' +
+                '                            <el-button type="primary" size="mini" @click="queryDataForPage">查询</el-button>\n' +
+                '                            <el-button type="primary" size="mini" @click="startGetMovie">开始爬取</el-button>\n' +
+                '                        </el-row>\n' +
+                '                        <el-table size="mini" :data="tableData" style="width: 100%" height="450" stripe border>\n' +
+                '                            <el-table-column prop="movieId" label="电影ID" width="70"></el-table-column>\n' +
+                '                            <el-table-column prop="movieName" label="电影名称" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="tip" label="提示" width="200"></el-table-column>\n' +
+                '                            <el-table-column prop="type" label="类型" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="area" label="地区" width="100"></el-table-column>\n' +
+                '                            <el-table-column prop="director" label="导演" width="200" show-overflow-tooltip></el-table-column>\n' +
+                '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="minute" label="时长" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="score" label="豆瓣评分" width="100"></el-table-column>\n' +
+                '                            <el-table-column prop="language" label="语言" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="actors" label="演员" width="1000"  show-overflow-tooltip></el-table-column>\n' +
+                '                        </el-table>\n' +
+                '                        <div style="height:40px;line-height:40px;text-align: right;">\n' +
+                '                            <el-pagination\n' +
+                '                                    @size-change="handleSizeChange"\n' +
+                '                                    @current-change="handleCurrentChange"\n' +
+                '                                    :current-page="currentPage"\n' +
+                '                                    :page-sizes="[10,50,100, 200, 300, 400]"\n' +
+                '                                    :page-size="pageSize"\n' +
+                '                                    layout="total, sizes, prev, pager, next, jumper"\n' +
+                '                                    :total="totalCount">\n' +
+                '                            </el-pagination>\n' +
+                '                        </div></div>',
+            data:function(){
+                return {
+                    vloading:false,
+                    tableData:[],
+                    totalCount:0,
+                    currentPage:1,
+                    pageSize:10
+                };
+            },
+            created:function(){
+                console.log("jestmovice created");
+            },
+            methods:{
+                queryDataForPage:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/jestmovie/getAllMovieForPage";
+                    var params = "page=" + this.currentPage + "&pageSize=" + this.pageSize;
+                    axios.post(url,params).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            var page = response.data.page;
+                            self.tableData = page["dataList"];
+                            self.totalCount = page["totalCount"];
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                startGetMovie:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/jestmovie/startDownloadMovie";
+                    axios.post(url).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            self.$message("后台处理中,稍后刷新页面!");
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                handleSizeChange:function(val){
+                    this.pageSize = val;
+                    this.queryDataForPage();
+                },
+                handleCurrentChange:function(val){
+                    this.currentPage = val;
+                    this.queryDataForPage();
+                },
+                deleteAllMovie:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/movie/deleteAllMovie";
+                    axios.post(url).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            self.$message("删除成功!");
+                            setTimeout(self.queryDataForPage(),500);
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                }
+            }
+        };
+
         var maoyan = {
             template :'<div><el-row>\n' +
                 '                            <el-alert title="进度" type="info"\n' +
@@ -198,7 +306,8 @@
         var routes = [
             {path:'/',redirect:'/p1'},
             { path: '/p1', component: movie },
-            { path: '/p2', component: maoyan }
+            { path: '/p2', component: maoyan },
+            { path: '/p3', component: jestmovie }
         ];
 
 

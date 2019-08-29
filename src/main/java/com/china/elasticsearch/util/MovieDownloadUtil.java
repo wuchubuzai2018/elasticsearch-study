@@ -26,7 +26,7 @@ public class MovieDownloadUtil {
 
     public static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:61.0) Gecko/20100101 Firefox/61.0";
 
-    public static final int TOTAL_PAGE = 20;
+    public static final int TOTAL_PAGE = 1;
 
     public static void main(String[] args){
         startGetMovies();

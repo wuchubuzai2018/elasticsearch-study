@@ -1,22 +1,15 @@
-package com.china.elasticsearch.bean;
+package com.china.elasticsearch.bean.jest;
 
-import com.china.elasticsearch.constant.MovieConstant;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-
-import java.io.Serializable;
-import java.util.Date;
+import io.searchbox.annotations.JestId;
 
 /**
- * 基于Spring Data ElasticSearchTemplate
- * 计划从80s上爬取电影信息
+ * 基于Jest的API操作
+ * @date 2019-08-29
  */
-@Document(indexName = MovieConstant.MOVIE_INDEX_NAME, type = MovieConstant.MOVIE_TYPE_NAME)
-public class MovieEntity implements Serializable {
-
+public class JestMovieEntity {
 
     /**电影ID*/
-    @Id
+    @JestId
     private String movieId;
 
     /**电影名称*/
