@@ -8,6 +8,9 @@ import io.searchbox.core.Bulk;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
+import io.searchbox.indices.CreateIndex;
+import io.searchbox.indices.DeleteIndex;
+import io.searchbox.indices.mapping.PutMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -22,6 +25,63 @@ public class BaseJestElasticSearchDaoImpl implements IBaseJestElasticSearchDao{
 
     @Autowired
     private JestClient jestClient;
+
+    /**
+     * 创建索引
+     * @param indexName
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public boolean createIndex(String indexName)throws Exception{
+        JestResult jestResult = jestClient.execute(new CreateIndex.Builder(indexName).build());
+        return jestResult.isSucceeded();
+    }
+
+    /**
+     * 删除索引
+     * @param indexName
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public boolean deleteIndex(String indexName)throws Exception{
+        JestResult jestResult = jestClient.execute(new DeleteIndex.Builder(indexName).build());
+        return jestResult.isSucceeded();
+    }
+
+    /**
+     * 设置索引的mapping
+     * @param indexName
+     * @param type
+     * @param mappingString
+     * @throws Exception
+     */
+    @Override
+    public void createIndexMapping(String indexName, String type, String mappingString)throws Exception{
+        //mappingString为拼接好的json格式的mapping串
+        PutMapping.Builder builder = new PutMapping.Builder(indexName, type, mappingString);
+        JestResult jestResult = jestClient.execute(builder.build());
+        System.out.println("createIndexMapping result:{}" + jestResult.isSucceeded());
+        if (!jestResult.isSucceeded()) {
+            System.err.println("settingIndexMapping error:{}" + jestResult.getErrorMessage());
+        }
+    }
+
+
+    /**
+     * 单条保存
+     * @param object
+     * @param indexName
+     * @param typeName
+     * @throws Exception
+     */
+    public void save(Object object,String indexName,String typeName)throws Exception{
+        Index index = new Index.Builder(object).index(indexName).type(typeName).build();
+        JestResult jestResult = jestClient.execute(index);
+        boolean isSuccess = jestResult.isSucceeded();
+    }
+
 
     /**
      * 批量保存接口
@@ -60,5 +120,21 @@ public class BaseJestElasticSearchDaoImpl implements IBaseJestElasticSearchDao{
         page.setTotalCount(result.getTotal());
         page.setDataList(list);
         return page;
+    }
+
+    /**
+     * 输入条件进行查询
+     * @param searchBody
+     * @param indexName
+     * @param typeName
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public String queryForString(String searchBody,String indexName,String typeName)throws Exception{
+        Search search = new Search.Builder(searchBody)
+                .addIndex(indexName).addType(typeName).build();
+        SearchResult result = jestClient.execute(search);
+        return result.getSourceAsString();
     }
 }
