@@ -1,7 +1,7 @@
 # 基于ElasticSearch6.8.2学习
 
 ## 项目描述
-基于Docker环境运行的ElasticSearch6.8.2,目前项目中集成了3种Java API:
+基于Docker环境运行的ElasticSearch6.8.2,目前项目中集成了3种与ElasticSearch交互的API:
 1. 使用Spring Data ElasticSearch 3.1.10
 2. 使用Rest High Level Client 6.8.2
 3. 使用Jest API 6.3.1
@@ -10,18 +10,21 @@
 
 
 ## 计划及实现
-目前计划从80s网站上进行爬虫，爬取电影信息，然后存储到ES中，并实现相关操作
+目前计划从80s网站\猫眼电影票房上进行爬虫，爬取电影信息，然后存储到ES中，并实现相关操作
 
 目前实现：
 1. 从80s网站爬虫电影信息,使用Jsoup
 2. 页面的分页查询操作,使用Spring Data ElasticSearch与Jest API
-3. 全部删除操作(底层可能只会删除1000条,有待研究)
+3. 全部删除操作(Jest Api使用deleteByQuery，Spring Data API可能是分页删除的)
+4. 单条删除操作
 
 待计划：
 1. 从猫眼电影票房信息上进行爬虫
 2. 80s模块的一些基本操作
 3. 一些查询条件学习
 
+发现的问题：
+1. 对文档操作时需要注意refresh问题，如果删除完数据后,马上进行查询,结果不会立即刷新，目前基于jest api底层代码增加了refresh擦参数，基于spring data模块的采用前端延迟查询方式
 
 ## 技术架构
 
@@ -34,7 +37,7 @@
 7. Spring Data ElasticSearch 3.1.10
 8. Rest High Level Client 6.8.2
 9. Jest API 6.3.1
-10. Vue2.6 + Vue Router + Element UI 2.11.1 +Axios
+10. Vue2.6 + Vue Router + Element UI 2.11.1 + Axios + Qs
 
 
 ## Java API对比
@@ -123,4 +126,7 @@ http://localhost:7071/
 ...
 ````
 ## 目前效果图
+1. 基于Spring Data API的截图
 ![Image text](./images/t1.png)
+2. 基于Jest API的截图
+![Image text](./images/t2.png)

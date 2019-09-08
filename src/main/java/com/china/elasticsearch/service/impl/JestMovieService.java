@@ -46,6 +46,15 @@ public class JestMovieService implements IJestMovieService {
                 ,JEST_MOVIE_TYPENAME, JestMovieEntity.class);
     }
 
+    @Override
+    public boolean deleteMovieById(String movieId) throws Exception{
+        return jestMovieDao.deleteById(JEST_MOVIE_INDEXNAME,JEST_MOVIE_TYPENAME,movieId);
+    }
+
+    @Override
+    public boolean deleteAllMovie() throws Exception {
+        return jestMovieDao.deleteAll(JEST_MOVIE_INDEXNAME,JEST_MOVIE_TYPENAME);
+    }
 
 
 }

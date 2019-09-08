@@ -12,5 +12,7 @@ public interface IJestMovieService {
 
     public PageEntity getAllMovieForPage(int page, int pageSize)throws Exception;
 
+    public boolean deleteMovieById(String movieId)throws Exception;
 
+    public boolean deleteAllMovie()throws Exception;
 }

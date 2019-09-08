@@ -20,7 +20,7 @@ public interface IBaseJestElasticSearchDao {
 
 
     /**
-     * 删除所有
+     * 删除索引
      * @param indexName
      * @return
      * @throws Exception
@@ -70,8 +70,23 @@ public interface IBaseJestElasticSearchDao {
      */
     public String queryForString(String searchBody,String indexName,String typeName)throws Exception;
 
+    /**
+     * 全部删除
+     * @param indexName
+     * @param typeName
+     * @return
+     */
+    public boolean deleteAll(String indexName,String typeName)throws Exception;
 
-
+    /**
+     * 单条数据进行删除
+     * @param indexName
+     * @param typeName
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public boolean deleteById(String indexName,String typeName,String id)throws Exception;
 
 
 

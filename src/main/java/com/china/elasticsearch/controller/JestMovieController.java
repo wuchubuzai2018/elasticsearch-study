@@ -56,5 +56,33 @@ public class JestMovieController {
         return rMap;
     }
 
+    /**
+     * 删除所有数据
+     * @date 2019-09-07
+     * @return
+     */
+    @RequestMapping("/deleteAllMovie")
+    @ResponseBody
+    public Map<String,Object> deleteAllMovie() throws Exception {
+        Map<String,Object> rMap = new HashMap<String,Object>();
+        boolean success = jestMovieService.deleteAllMovie();
+        rMap.put("success",success);
+        return rMap;
+    }
+
+    /**
+     * 删除指定ID的数据
+     * @date 2019-09-07
+     * @return
+     */
+    @RequestMapping("/deleteMovieById")
+    @ResponseBody
+    public Map<String,Object> deleteMovieById(String movieId)throws Exception {
+        Map<String,Object> rMap = new HashMap<String,Object>();
+        boolean success = jestMovieService.deleteMovieById(movieId);
+        rMap.put("success",success);
+        return rMap;
+    }
+
 
 }

@@ -4,10 +4,7 @@ import com.china.elasticsearch.bean.PageEntity;
 import com.google.gson.Gson;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
-import io.searchbox.core.Bulk;
-import io.searchbox.core.Index;
-import io.searchbox.core.Search;
-import io.searchbox.core.SearchResult;
+import io.searchbox.core.*;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.DeleteIndex;
 import io.searchbox.indices.mapping.PutMapping;
@@ -137,4 +134,44 @@ public class BaseJestElasticSearchDaoImpl implements IBaseJestElasticSearchDao{
         SearchResult result = jestClient.execute(search);
         return result.getSourceAsString();
     }
+
+    /**
+     * 删除全部数据
+     * @param indexName
+     * @param typeName
+     * @return
+     * @throws Exception
+     */
+    public boolean deleteAll(String indexName,String typeName)throws Exception{
+        String query = "{\"query\":{\"match_all\":{}}}";
+        DeleteByQuery deleteByQuery = new DeleteByQuery.Builder(query).addIndex(indexName).addType(typeName).refresh(true).build();
+        JestResult jestResult = jestClient.execute(deleteByQuery);
+        System.out.println(jestResult.getErrorMessage());
+        boolean isSuccess = jestResult.isSucceeded();
+        return isSuccess;
+    }
+
+
+    /**
+     * 单条删除
+     * @param indexName
+     * @param typeName
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public boolean deleteById(String indexName,String typeName,String id)throws Exception{
+        //注意refresh方法
+        Delete index = new Delete.Builder(id).index(indexName).type(typeName).refresh(true).build();
+        JestResult jestResult = jestClient.execute(index);
+        System.out.println(jestResult.getErrorMessage());
+        boolean isSuccess = jestResult.isSucceeded();
+        return isSuccess;
+    }
+
+
+
+
+
 }

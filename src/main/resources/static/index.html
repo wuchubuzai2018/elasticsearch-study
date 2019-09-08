@@ -75,7 +75,8 @@
         var movie = {
                     template :'<div v-loading="vloading"><el-row>\n' +
                 '                            <el-alert title="进度" type="info"\n' +
-                '                                      description="基于Spring Data ElasticSearch API进行操作，目前实现爬取80s上的电影信息爬虫、分页查询、单条删除、全部删除(暂时不清楚如何删除全部数据,底层好像有限制)" show-icon>\n' +
+                '                                      description="基于Spring Data ElasticSearch API进行操作，目前实现爬取80s上的电影信息爬虫、分页查询、单条删除、全部删除(暂时不清楚如何删除全部数据,底层好像有限制),' +
+                        '由于ES的refresh机制,目前删除后需要前端手动延迟1s查询" show-icon>\n' +
                 '                            </el-alert>\n' +
                 '                        </el-row>\n' +
                 '                        <el-row style="height:40px;line-height:40px;text-align: right;">\n' +
@@ -221,12 +222,14 @@
         var jestmovie = {
             template :'<div v-loading="vloading"><el-row>\n' +
                 '                            <el-alert title="进度" type="info"\n' +
-                '                                      description="基于Jest API实现爬取80s上的电影信息爬虫、分页查询" show-icon>\n' +
+                '                                      description="基于Jest API实现爬取80s上的电影信息爬虫、分页查询、全部删除、单条删除等,' +
+                '底层代码注意需要增加refresh代码,否则删除后不会马上看见" show-icon>\n' +
                 '                            </el-alert>\n' +
                 '                        </el-row>\n' +
                 '                        <el-row style="height:40px;line-height:40px;text-align: right;">\n' +
                 '                            <el-button type="primary" size="mini" @click="queryDataForPage">查询</el-button>\n' +
                 '                            <el-button type="primary" size="mini" @click="startGetMovie">开始爬取</el-button>\n' +
+                '                            <el-button type="primary" size="mini" @click="deleteAllMovie">删除所有</el-button>\n' +
                 '                        </el-row>\n' +
                 '                        <el-table size="mini" :data="tableData" style="width: 100%" height="450" stripe border>\n' +
                 '                            <el-table-column prop="movieId" label="电影ID" width="70"></el-table-column>\n' +
@@ -241,6 +244,12 @@
                 '                            <el-table-column prop="language" label="语言" width="150"></el-table-column>\n' +
                 '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
                 '                            <el-table-column prop="actors" label="演员" width="1000"  show-overflow-tooltip></el-table-column>\n' +
+                '                            <el-table-column fixed="right" label="操作" width="100" align="center">\n' +
+                '                               <template slot-scope="scope">\n' +
+                '                                    <el-button @click="deleteMovie(scope.row)" type="text" size="small">删除</el-button>\n' +
+                // '                                    <el-button type="text" size="small">编辑</el-button>\n' +
+                '                                </template>\n' +
+                '                            </el-table-column>\n' +
                 '                        </el-table>\n' +
                 '                        <div style="height:40px;line-height:40px;text-align: right;">\n' +
                 '                            <el-pagination\n' +
@@ -308,16 +317,50 @@
                 deleteAllMovie:function(){
                     var self = this;
                     self.vloading = true;
-                    var url = "/movie/deleteAllMovie";
+                    var url = "/jestmovie/deleteAllMovie";
                     axios.post(url).then(function (response) {
-                        self.vloading = false;
                         if(response && response.data && response.data.success){
+                            self.vloading = false;
                             self.$message("删除成功!");
-                            setTimeout(self.queryDataForPage(),500);
+                            self.queryDataForPage();
+                        }else{
+                            self.vloading = false;
+                            self.$message.error("删除失败!");
                         }
                     }).catch(function (error) {
                         self.vloading = false;
                         console.log(error);
+                    });
+                },
+                deleteMovie:function (record) {
+                    var self = this;
+                    self.vloading = true;
+                    var movieId = record["movieId"];
+                    var url = "/jestmovie/deleteMovieById";
+                    axios({
+                        method: "post",
+                        url: url,
+                        data:this.$qs.stringify({
+                            movieId:movieId
+                        })
+                    }).then(function (response) {
+                        if(response && response.data && response.data.success){
+                            self.vloading = false;
+                            self.$message("删除成功!");
+                            self.queryDataForPage();
+                            // setTimeout(function () {
+                            //     self.vloading = false;
+                            //     self.$message("删除成功!");
+                            //     self.queryDataForPage();
+                            // },1000);
+                        }else{
+                            self.vloading = false;
+                            self.$message.error("删除失败!");
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                        self.$message.error("删除失败!");
                     });
                 }
             }
@@ -370,7 +413,7 @@
             },
             created:function(){
               console.log(this.$route.path);
-
+              this.$router.push("/p1");
             },
             methods : {
                 menuSelect:function(index,path){

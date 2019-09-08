@@ -1,6 +1,7 @@
 package com.china.elasticsearch.bean;
 
 import com.china.elasticsearch.constant.MovieConstant;
+import io.searchbox.annotations.JestId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -17,6 +18,7 @@ public class MovieEntity implements Serializable {
 
     /**电影ID*/
     @Id
+    @JestId
     private String movieId;
 
     /**电影名称*/
