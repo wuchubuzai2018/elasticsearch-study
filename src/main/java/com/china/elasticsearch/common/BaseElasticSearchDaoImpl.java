@@ -102,6 +102,10 @@ public class BaseElasticSearchDaoImpl implements IBaseElasticSearchDao{
         elasticsearchTemplate.delete(query,entityClass);
     }
 
+    @Override
+    public void deleteById(Class<?> entityClass,String id){
+        elasticsearchTemplate.delete(entityClass,id);
+    }
 
 
 

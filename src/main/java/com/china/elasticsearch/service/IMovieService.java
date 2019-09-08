@@ -21,4 +21,6 @@ public interface IMovieService {
     public PageEntity getAllMovieForPage(int page, int pageSize);
 
     public void deleteAllMovie();
+
+    public void deleteMovieById(String movieId);
 }

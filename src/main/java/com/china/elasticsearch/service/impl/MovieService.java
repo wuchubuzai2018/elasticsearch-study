@@ -97,4 +97,10 @@ public class MovieService implements IMovieService {
     }
 
 
+    @Override
+    public void deleteMovieById(String movieId){
+        movieDao.deleteById(MovieEntity.class,movieId);
+    }
+
+
 }

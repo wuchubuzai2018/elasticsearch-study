@@ -9,6 +9,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 80s电影信息的基本爬虫的工具类
@@ -77,6 +79,7 @@ public class MovieDownloadUtil {
                 //设置基本类型的信息
                 setTypeInfo(firstClearfixDiv,entity);
             }catch (Exception e){
+                e.printStackTrace();
                 System.out.println(movieName);
             }
 
@@ -131,19 +134,20 @@ public class MovieDownloadUtil {
                 entity.setDirector(director);
             }
             if("片长：".equals(flag)){
-                String minute = span.text().replace("片长：","")
-                        .replace("分钟","")
-                        .replace(" India: ","")
-                        .replace(" Hong Kong: ","")
-                        .replace(" France: ","")
-                        .replace(" USA: ","")
-                        .replace(" UK: ","")
-                        .replace("min","")
-                        .replace("(台湾)","")
-                        .replace("中国大陆)","")
-                        .replace("(美国/中国大陆)","")
-                        .replace(" Argentina: ","")
-                        .replace(" Japan: ","").trim();
+//                String minute = span.text().replace("片长：","")
+//                        .replace("分钟","")
+//                        .replace(" India: ","")
+//                        .replace(" Hong Kong: ","")
+//                        .replace(" France: ","")
+//                        .replace(" USA: ","")
+//                        .replace(" UK: ","")
+//                        .replace("min","")
+//                        .replace("(台湾)","")
+//                        .replace("中国大陆)","")
+//                        .replace("(美国/中国大陆)","")
+//                        .replace(" Argentina: ","")
+//                        .replace(" Japan: ","").trim();
+                String minute = getMinute(span.text());
 
                 entity.setMinute(Integer.parseInt(minute));
             }
@@ -159,5 +163,21 @@ public class MovieDownloadUtil {
         return actorsStr;
     }
 
+
+    /**
+     * 提取电影时长
+     * @param srcText
+     * @return
+     */
+    public static String getMinute(String srcText){
+
+        Pattern p = Pattern.compile("([0-9]+)");
+        Matcher matcher = p.matcher(srcText);
+        if(matcher.find()){
+            String m = matcher.group();
+            return m;
+        }
+        return "0";
+    }
 
 }

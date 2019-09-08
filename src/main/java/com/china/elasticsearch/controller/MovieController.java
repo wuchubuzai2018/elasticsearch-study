@@ -115,7 +115,19 @@ public class MovieController {
         return rMap;
     }
 
-
+    /**
+     * 删除指定ID的数据
+     * @date 2019-09-07
+     * @return
+     */
+    @RequestMapping("/deleteMovieById")
+    @ResponseBody
+    public Map<String,Object> deleteMovieById(String movieId) {
+        Map<String,Object> rMap = new HashMap<String,Object>();
+        movieService.deleteMovieById(movieId);
+        rMap.put("success",true);
+        return rMap;
+    }
 
 
 

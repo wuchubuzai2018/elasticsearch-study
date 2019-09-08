@@ -24,12 +24,13 @@
         <script type="text/javascript" src="./js/vue-router.js"></script>
         <script type="text/javascript" src="./js/element-ui/index.js"></script>
         <script type="text/javascript" src="./js/axios.min.js"></script>
+        <script type="text/javascript" src="./js/qs.min.js"></script>
     </head>
     <body>
         <div id="app">
             <el-container>
                 <el-header class="top">
-                    Vue + ElasticSearch + Spring Boot主页面(v20190829)
+                    Vue + ElasticSearch + Spring Boot主页面(v20190907)
                 </el-header>
                 <el-container>
                     <el-aside width="250px" style="background-color: rgb(238, 241, 246)">
@@ -64,13 +65,17 @@
     </body>
     <script type="text/javascript">
 
+        Vue.prototype.$qs = Qs;
+        Vue.prototype.$axios = axios;
+
+
         // 1. 定义 (路由) 组件。
         // 可以从其他文件 import 进来
         var Bar = { template: '<div>待实现的猫眼票房爬虫采集</div>' };
         var movie = {
                     template :'<div v-loading="vloading"><el-row>\n' +
                 '                            <el-alert title="进度" type="info"\n' +
-                '                                      description="目前实现爬取80s上的电影信息、分页查询、全部删除(暂时不清楚如何删除全部数据,底层好像有限制)" show-icon>\n' +
+                '                                      description="基于Spring Data ElasticSearch API进行操作，目前实现爬取80s上的电影信息爬虫、分页查询、单条删除、全部删除(暂时不清楚如何删除全部数据,底层好像有限制)" show-icon>\n' +
                 '                            </el-alert>\n' +
                 '                        </el-row>\n' +
                 '                        <el-row style="height:40px;line-height:40px;text-align: right;">\n' +
@@ -91,6 +96,12 @@
                 '                            <el-table-column prop="language" label="语言" width="150"></el-table-column>\n' +
                 '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
                 '                            <el-table-column prop="actors" label="演员" width="1000"  show-overflow-tooltip></el-table-column>\n' +
+                '                            <el-table-column fixed="right" label="操作" width="100" align="center">\n' +
+                '                               <template slot-scope="scope">\n' +
+                '                                    <el-button @click="deleteMovie(scope.row)" type="text" size="small">删除</el-button>\n' +
+                // '                                    <el-button type="text" size="small">编辑</el-button>\n' +
+                '                                </template>\n' +
+                '                            </el-table-column>\n' +
                 '                        </el-table>\n' +
                 '                        <div style="height:40px;line-height:40px;text-align: right;">\n' +
                 '                            <el-pagination\n' +
@@ -160,14 +171,48 @@
                             self.vloading = true;
                             var url = "/movie/deleteAllMovie";
                             axios.post(url).then(function (response) {
-                                self.vloading = false;
                                 if(response && response.data && response.data.success){
-                                    self.$message("删除成功!");
-                                    setTimeout(self.queryDataForPage(),500);
+                                    setTimeout(function () {
+                                        self.vloading = false;
+                                        self.$message("删除成功!");
+                                        self.queryDataForPage();
+                                    },1000);
+                                }else{
+                                    self.vloading = false;
+                                    self.$message.error("删除失败!");
                                 }
                             }).catch(function (error) {
                                 self.vloading = false;
                                 console.log(error);
+                                self.$message.error("删除失败!");
+                            });
+                        },
+                        deleteMovie:function (record) {
+                            var self = this;
+                            self.vloading = true;
+                            var movieId = record["movieId"];
+                            var url = "/movie/deleteMovieById";
+                            axios({
+                                method: "post",
+                                url: url,
+                                data:this.$qs.stringify({
+                                    movieId:movieId
+                                })
+                            }).then(function (response) {
+                                if(response && response.data && response.data.success){
+                                    setTimeout(function () {
+                                        self.vloading = false;
+                                        self.$message("删除成功!");
+                                        self.queryDataForPage();
+                                    },1000);
+                                }else{
+                                    self.vloading = false;
+                                    self.$message.error("删除失败!");
+                                }
+                            }).catch(function (error) {
+                                self.vloading = false;
+                                console.log(error);
+                                self.$message.error("删除失败!");
                             });
                         }
                     }
@@ -176,7 +221,7 @@
         var jestmovie = {
             template :'<div v-loading="vloading"><el-row>\n' +
                 '                            <el-alert title="进度" type="info"\n' +
-                '                                      description="基于Jest API实现爬取80s上的电影信息爬虫" show-icon>\n' +
+                '                                      description="基于Jest API实现爬取80s上的电影信息爬虫、分页查询" show-icon>\n' +
                 '                            </el-alert>\n' +
                 '                        </el-row>\n' +
                 '                        <el-row style="height:40px;line-height:40px;text-align: right;">\n' +

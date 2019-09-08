@@ -42,4 +42,12 @@ public interface IBaseElasticSearchDao {
      * @param entityClass
      */
     public void deleteAll(Class<?> entityClass);
+
+
+    /**
+     * 根据ID进行删除
+     * @param entityClass
+     * @param id
+     */
+    public void deleteById(Class<?> entityClass,String id);
 }
