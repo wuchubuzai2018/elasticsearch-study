@@ -4,6 +4,9 @@ import com.china.elasticsearch.constant.MovieConstant;
 import io.searchbox.annotations.JestId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Mapping;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,6 +16,7 @@ import java.util.Date;
  * 计划从80s上爬取电影信息
  */
 @Document(indexName = MovieConstant.MOVIE_INDEX_NAME, type = MovieConstant.MOVIE_TYPE_NAME)
+@Mapping(mappingPath="/mapping/moviemapping.json")
 public class MovieEntity implements Serializable {
 
 
@@ -25,6 +29,7 @@ public class MovieEntity implements Serializable {
     private String movieName;
 
     /**演员*/
+    //@Field(type = FieldType.Text,analyzer="whitespace",searchAnalyzer="ik_smart")
     private String actors;
 
     /**类型:战争*/

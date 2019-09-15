@@ -18,7 +18,7 @@ public interface IMovieService {
 
     public void startDownloadMovie();
 
-    public PageEntity getAllMovieForPage(int page, int pageSize);
+    public PageEntity getAllMovieForPage(String searchActors,int page, int pageSize);
 
     public void deleteAllMovie();
 

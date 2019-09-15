@@ -1,6 +1,7 @@
 package com.china.elasticsearch.common;
 
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,26 @@ public class BaseElasticSearchDaoImpl implements IBaseElasticSearchDao{
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Override
+    public void createIndex(Class<?> classes){
+        elasticsearchTemplate.createIndex(classes);
+    }
+
+    @Override
+    public void putMapping(Class<?> classes){
+        try{
+            elasticsearchTemplate.putMapping(classes);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createIndexAndMapping(Class<?> classes){
+        this.createIndex(classes);
+        this.putMapping(classes);
+    }
 
     /**
      * 保存数据,可以不需要显示调用withIndexName,withType,withId
@@ -89,6 +110,37 @@ public class BaseElasticSearchDaoImpl implements IBaseElasticSearchDao{
         Page<?> page = elasticsearchTemplate.queryForPage(searchQuery, entityClass);
         return page;
     }
+
+
+    /**
+     * 根据查询条件进行查询
+     * @param queryBuilder
+     * @param curPage
+     * @param pageSize
+     * @param entityClass
+     * @return
+     */
+    @Override
+    public Page<?> queryForPage(QueryBuilder queryBuilder,int curPage, int pageSize,Class<?> entityClass){
+        //of的第一个参数应该从0开始
+        curPage = curPage - 1;
+        Pageable pageable = PageRequest.of(curPage,pageSize);
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(queryBuilder)
+                .withPageable(pageable)
+                .build();
+        Page<?> page = elasticsearchTemplate.queryForPage(searchQuery, entityClass);
+        return page;
+    }
+
+
+//    public String getQueryJson(SearchQuery query){
+//        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//        String json = searchSourceBuilder.query(query.getQuery()).toString();
+//        System.out.println(json);
+//        return json;
+//    }
+
+
 
     /**
      * 删除所有数据,目前好像只能删除前1000条

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,9 +74,10 @@ public class MovieController {
      */
     @RequestMapping("/getAllMovieForPage")
     @ResponseBody
-    public Map<String,Object> getAllMovieForPage(int page,int pageSize) {
+    public Map<String,Object> getAllMovieForPage(HttpServletRequest request,int page, int pageSize) {
         Map<String,Object> rMap = new HashMap<String,Object>();
-        PageEntity pageObj = movieService.getAllMovieForPage(page,pageSize);
+        String searchActors = request.getParameter("actors");
+        PageEntity pageObj = movieService.getAllMovieForPage(searchActors,page,pageSize);
         rMap.put("page",pageObj);
         rMap.put("success",true);
         return rMap;

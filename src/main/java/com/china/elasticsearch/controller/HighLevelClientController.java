@@ -5,7 +5,6 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.rest.RestStatus;
@@ -63,7 +62,7 @@ public class HighLevelClientController {
         jsonMap.put("message", "trying out Elasticsearch");
         try {
             IndexRequest indexRequest = new IndexRequest("usershigh","_doc","002").source(jsonMap);
-            IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
+            IndexResponse indexResponse = client.index(indexRequest);
             if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
                 System.out.println("created");
             } else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
