@@ -59,6 +59,9 @@ public class MovieEntity implements Serializable {
     /**片长*/
     private int minute;
 
+    private Date createDate;
+
+    private Date updateDate;
 
     public String getMovieId() {
         return movieId;
@@ -154,5 +157,21 @@ public class MovieEntity implements Serializable {
 
     public void setMinute(int minute) {
         this.minute = minute;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

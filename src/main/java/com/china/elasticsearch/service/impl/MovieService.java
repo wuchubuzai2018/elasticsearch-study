@@ -86,6 +86,11 @@ public class MovieService implements IMovieService {
     public void startDownloadMovie(){
         System.out.println("--------------准备开始爬取--------------");
         List<MovieEntity> list = MovieDownloadUtil.startGetMovies();
+        if(list != null && list.size() > 0){
+            for(MovieEntity entity : list){
+                entity.setCreateDate(new Date());
+            }
+        }
         System.out.println("--------------爬取完成--------------");
         movieDao.saveBatch(list);
         System.out.println("--------------保存完成--------------");

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class MovieDownloadUtil {
 
-   public static final String ROOT_URL =  "http://80s.la";
+   public static final String ROOT_URL =  "http://www.8080s.net";
 
     public static final String BASIC_URL = ROOT_URL + "/movie/list/-----p";
 
@@ -28,7 +28,7 @@ public class MovieDownloadUtil {
 
     public static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:61.0) Gecko/20100101 Firefox/61.0";
 
-    public static final int TOTAL_PAGE = 1;
+    public static final int TOTAL_PAGE = 10;
 
     public static void main(String[] args){
         startGetMovies();
@@ -67,10 +67,20 @@ public class MovieDownloadUtil {
             Document detailDocument = Jsoup.connect(ROOT_URL + href).userAgent(USER_AGENT).get();
             Element infoEle = detailDocument.select(DEATAIL_CSS_PATH).get(0);
             String deMovieName = infoEle.selectFirst("h1.font14w").text();
-            String year = deMovieName.substring(deMovieName.indexOf("(") + 1,deMovieName.lastIndexOf(")"));//年份
-            if("未知".equals(year)){
-                year = "0";
+            int year = 0;
+            try{
+                String yearStr = deMovieName.substring(deMovieName.lastIndexOf("(") + 1,deMovieName.lastIndexOf(")"));//年份
+                if("未知".equals(yearStr)){
+                    year = 0;
+                }else{
+                    year = Integer.parseInt(yearStr);
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println(movieName);
             }
+
+
 
             String tip = infoEle.selectFirst(".tip") != null ? infoEle.selectFirst(".tip").text() :"";//版本提示
 
@@ -97,7 +107,7 @@ public class MovieDownloadUtil {
 
             entity.setMovieId(movieId);
             entity.setMovieName(movieName);
-            entity.setYear(Integer.parseInt(year));
+            entity.setYear(year);
             entity.setTip(tip);
             entity.setScore(Double.parseDouble(scoreText));
 

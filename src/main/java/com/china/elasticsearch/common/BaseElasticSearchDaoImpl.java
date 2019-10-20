@@ -143,14 +143,13 @@ public class BaseElasticSearchDaoImpl implements IBaseElasticSearchDao{
 
 
     /**
-     * 删除所有数据,目前好像只能删除前1000条
+     * 删除所有数据
      * @param entityClass
      */
     @Override
     public void deleteAll(Class<?> entityClass){
         DeleteQuery query = new DeleteQuery();
         query.setQuery(matchAllQuery());
-        //这里底层目前好像是只删除前1000条,如果没有指定size的话
         elasticsearchTemplate.delete(query,entityClass);
     }
 

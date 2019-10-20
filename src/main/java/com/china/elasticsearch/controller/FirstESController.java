@@ -108,7 +108,6 @@ public class FirstESController {
                 .withUpdateRequest(up)
                 .withClass(FirstBook.class)
                 .build();
-
         elasticsearchTemplate.update(updateQuery);
     }
 
