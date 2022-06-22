@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>6.8.2</version>
+            <version>6.8.15</version>
         </dependency>
         <!--以下为依赖需要一致的-->
         <dependency>
