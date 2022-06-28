@@ -1,0 +1,17 @@
+server:
+  port: 7071
+spring:
+  data:
+    elasticsearch:
+      rest:
+        uris: http://127.0.0.1:9200
+  elasticsearch:
+    jest:
+      uris: http://127.0.0.1:9200
+      read-timeout: 5000
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,WEB-INF/**
+

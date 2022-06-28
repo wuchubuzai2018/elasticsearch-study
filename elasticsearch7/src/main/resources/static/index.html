@@ -1,0 +1,458 @@
+<html !DOCTYPE>
+    <head>
+        <title>ElasticSearch学习页面</title>
+        <meta charset="UTF-8"/>
+        <link rel="stylesheet" href="./js/element-ui/index.css"/>
+        <style type="text/css">
+            #app .top{
+                height:60px;
+                line-height:60px;
+                padding-left:20px;
+                font-size:20px;
+                color:#FFF;
+                background-color: #409eff;
+            }
+            .el-table__body{
+                font-size:14px;
+            }
+            .el-table--mini td{
+                padding:2px 0px;
+            }
+            .el-form{
+                margin-bottom: 0px;
+            }
+            .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+                margin-bottom:0px;
+            }
+
+
+            .el-menu-item.is-active{
+                background-color: #545c64;
+            }
+        </style>
+        <script type="text/javascript" src="./js/vue.min.js"></script>
+        <script type="text/javascript" src="./js/vue-router.js"></script>
+        <script type="text/javascript" src="./js/element-ui/index.js"></script>
+        <script type="text/javascript" src="./js/axios.min.js"></script>
+        <script type="text/javascript" src="./js/qs.min.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <el-container>
+                <el-header class="top">
+                    Spring Boot + ElasticSearch + Vue主页面(v20220629)
+                </el-header>
+                <el-container>
+                    <el-aside width="250px" style="background-color: rgb(238, 241, 246)">
+                        <el-menu
+                                :default-active="actionIndex"
+                                class="el-menu-vertical-demo"
+                                text-color="#000"
+                                active-text-color="#ffd04b"
+                                @select="menuSelect">
+                            <el-menu-item index="/p1">
+                                使用Spring Data API电影网站爬虫
+                            </el-menu-item>
+<!--                            <el-menu-item index="/p3">-->
+<!--                                使用Jest API电影网站爬虫-->
+<!--                            </el-menu-item>-->
+                            <el-menu-item index="/p2" >
+                                猫眼电影票房爬虫
+                            </el-menu-item>
+                            <el-menu-item index="/p4" >
+                                其他爬虫
+                            </el-menu-item>
+                        </el-menu>
+
+                    </el-aside>
+                    <el-main>
+                        <router-view></router-view>
+                    </el-main>
+                </el-container>
+
+            </el-container>
+        </div>
+    </body>
+    <script type="text/javascript">
+
+        Vue.prototype.$qs = Qs;
+        Vue.prototype.$axios = axios;
+
+
+        // 1. 定义 (路由) 组件。
+        // 可以从其他文件 import 进来
+        var Bar = { template: '<div>待实现的猫眼票房爬虫采集</div>' };
+        var movie = {
+                    template :'<div v-loading="vloading"><el-row>\n' +
+                '                            <el-alert title="进度" type="info"\n' +
+                '                                      description="基于Spring Data ElasticSearch API进行操作，目前实现爬取80s上的电影信息爬虫、分页查询、演员姓名查询、单条删除、全部删除' +
+                        '" show-icon>\n' +
+                '                            </el-alert>\n' +
+                '                        </el-row>\n' +
+                '                        <el-row style="height:40px;line-height:40px;text-align: right;">\n' +
+                '                            <el-button type="primary" size="mini" @click="queryDataForPage">查询</el-button>\n' +
+                '                            <el-button type="primary" size="mini" @click="startGetMovie">开始爬取</el-button>\n' +
+                '                            <el-button type="primary" size="mini" @click="deleteAllMovie">删除所有</el-button>\n' +
+                '                        </el-row>\n' +
+                '                        <el-row style="height:40px;line-height:40px;text-align:left;padding: 5px 0;">\n' +
+                '                            <el-form :inline="true" :model="formInline" size="mini">' +
+                '                               <el-form-item label="演员">' +
+                '                                   <el-input v-model="formInline.actorValue" clearable placeholder="查询的演员名称,以空格分隔"></el-input>' +
+                '                               </el-form-item>' +
+                '                            </el-form>' +
+                '                        </el-row>\n' +
+                '                        <el-table size="mini" :data="tableData" style="width: 100%" height="410" stripe border>\n' +
+                '                            <el-table-column prop="movieId" label="电影ID" width="70"></el-table-column>\n' +
+                '                            <el-table-column prop="movieName" label="电影名称" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="tip" label="提示" width="200"></el-table-column>\n' +
+                '                            <el-table-column prop="type" label="类型" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="area" label="地区" width="100"></el-table-column>\n' +
+                '                            <el-table-column prop="director" label="导演" width="200" show-overflow-tooltip></el-table-column>\n' +
+                '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="minute" label="时长" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="score" label="豆瓣评分" width="100"></el-table-column>\n' +
+                '                            <el-table-column prop="language" label="语言" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="actors" label="演员" width="1000"  show-overflow-tooltip></el-table-column>\n' +
+                '                            <el-table-column fixed="right" label="操作" width="100" align="center">\n' +
+                '                               <template slot-scope="scope">\n' +
+                '                                    <el-button @click="deleteMovie(scope.row)" type="text" size="small">删除</el-button>\n' +
+                // '                                    <el-button type="text" size="small">编辑</el-button>\n' +
+                '                                </template>\n' +
+                '                            </el-table-column>\n' +
+                '                        </el-table>\n' +
+                '                        <div style="height:40px;line-height:40px;text-align: right;">\n' +
+                '                            <el-pagination\n' +
+                '                                    @size-change="handleSizeChange"\n' +
+                '                                    @current-change="handleCurrentChange"\n' +
+                '                                    :current-page="currentPage"\n' +
+                '                                    :page-sizes="[10,50,100, 200, 300, 400]"\n' +
+                '                                    :page-size="pageSize"\n' +
+                '                                    layout="total, sizes, prev, pager, next, jumper"\n' +
+                '                                    :total="totalCount">\n' +
+                '                            </el-pagination>\n' +
+                '                        </div></div>',
+                    data:function(){
+                        return {
+                            vloading:false,
+                            tableData:[],
+                            totalCount:0,
+                            currentPage:1,
+                            pageSize:50,
+                            actorValue:'',
+                            formInline:{
+                                actorValue:''
+                            }
+                        };
+                    },
+                    created:function(){
+                        console.log("movice created");
+                    },
+                    methods:{
+                        queryDataForPage:function(){
+                            var self = this;
+                            self.vloading = true;
+                            var url = "/movie/getAllMovieForPage";
+
+                            var params = {
+                                page:this.currentPage,
+                                pageSize:this.pageSize,
+                                actors:this.formInline.actorValue
+                            };
+                            axios.post(url,this.$qs.stringify(params)).then(function (response) {
+                                self.vloading = false;
+                                if(response && response.data && response.data.success){
+                                    var page = response.data.page;
+                                    self.tableData = page["dataList"];
+                                    self.totalCount = page["totalCount"];
+                                }
+                            }).catch(function (error) {
+                                self.vloading = false;
+                                console.log(error);
+                            });
+                        },
+                        startGetMovie:function(){
+                            var self = this;
+                            self.vloading = true;
+                            var url = "/movie/startDownloadMovie";
+                            axios.post(url).then(function (response) {
+                                self.vloading = false;
+                                if(response && response.data && response.data.success){
+                                    self.$message("后台处理中,稍后刷新页面!");
+                                }
+                            }).catch(function (error) {
+                                self.vloading = false;
+                                console.log(error);
+                            });
+                        },
+                        handleSizeChange:function(val){
+                            this.pageSize = val;
+                            this.queryDataForPage();
+                        },
+                        handleCurrentChange:function(val){
+                            this.currentPage = val;
+                            this.queryDataForPage();
+                        },
+                        deleteAllMovie:function(){
+                            var self = this;
+                            self.vloading = true;
+                            var url = "/movie/deleteAllMovie";
+                            axios.post(url).then(function (response) {
+                                if(response && response.data && response.data.success){
+                                    setTimeout(function () {
+                                        self.vloading = false;
+                                        self.$message("删除成功!");
+                                        self.queryDataForPage();
+                                    },1000);
+                                }else{
+                                    self.vloading = false;
+                                    self.$message.error("删除失败!");
+                                }
+                            }).catch(function (error) {
+                                self.vloading = false;
+                                console.log(error);
+                                self.$message.error("删除失败!");
+                            });
+                        },
+                        deleteMovie:function (record) {
+                            var self = this;
+                            self.vloading = true;
+                            var movieId = record["movieId"];
+                            var url = "/movie/deleteMovieById";
+                            axios({
+                                method: "post",
+                                url: url,
+                                data:this.$qs.stringify({
+                                    movieId:movieId
+                                })
+                            }).then(function (response) {
+                                if(response && response.data && response.data.success){
+                                    setTimeout(function () {
+                                        self.vloading = false;
+                                        self.$message("删除成功!");
+                                        self.queryDataForPage();
+                                    },1000);
+                                }else{
+                                    self.vloading = false;
+                                    self.$message.error("删除失败!");
+                                }
+                            }).catch(function (error) {
+                                self.vloading = false;
+                                console.log(error);
+                                self.$message.error("删除失败!");
+                            });
+                        }
+                    }
+                };
+
+        var jestmovie = {
+            template :'<div v-loading="vloading"><el-row>\n' +
+                '                            <el-alert title="进度" type="info"\n' +
+                '                                      description="基于Jest API实现爬取80s上的电影信息爬虫、分页查询、全部删除、单条删除等,' +
+                '底层代码注意需要增加refresh代码,否则删除后不会马上看见" show-icon>\n' +
+                '                            </el-alert>\n' +
+                '                        </el-row>\n' +
+                '                        <el-row style="height:40px;line-height:40px;text-align: right;">\n' +
+                '                            <el-button type="primary" size="mini" @click="queryDataForPage">查询</el-button>\n' +
+                '                            <el-button type="primary" size="mini" @click="startGetMovie">开始爬取</el-button>\n' +
+                '                            <el-button type="primary" size="mini" @click="deleteAllMovie">删除所有</el-button>\n' +
+                '                        </el-row>\n' +
+                '                        <el-table size="mini" :data="tableData" style="width: 100%" height="450" stripe border>\n' +
+                '                            <el-table-column prop="movieId" label="电影ID" width="70"></el-table-column>\n' +
+                '                            <el-table-column prop="movieName" label="电影名称" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="tip" label="提示" width="200"></el-table-column>\n' +
+                '                            <el-table-column prop="type" label="类型" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="area" label="地区" width="100"></el-table-column>\n' +
+                '                            <el-table-column prop="director" label="导演" width="200" show-overflow-tooltip></el-table-column>\n' +
+                '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="minute" label="时长" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="score" label="豆瓣评分" width="100"></el-table-column>\n' +
+                '                            <el-table-column prop="language" label="语言" width="150"></el-table-column>\n' +
+                '                            <el-table-column prop="year" label="年份" width="80"></el-table-column>\n' +
+                '                            <el-table-column prop="actors" label="演员" width="1000"  show-overflow-tooltip></el-table-column>\n' +
+                '                            <el-table-column fixed="right" label="操作" width="100" align="center">\n' +
+                '                               <template slot-scope="scope">\n' +
+                '                                    <el-button @click="deleteMovie(scope.row)" type="text" size="small">删除</el-button>\n' +
+                // '                                    <el-button type="text" size="small">编辑</el-button>\n' +
+                '                                </template>\n' +
+                '                            </el-table-column>\n' +
+                '                        </el-table>\n' +
+                '                        <div style="height:40px;line-height:40px;text-align: right;">\n' +
+                '                            <el-pagination\n' +
+                '                                    @size-change="handleSizeChange"\n' +
+                '                                    @current-change="handleCurrentChange"\n' +
+                '                                    :current-page="currentPage"\n' +
+                '                                    :page-sizes="[10,50,100, 200, 300, 400]"\n' +
+                '                                    :page-size="pageSize"\n' +
+                '                                    layout="total, sizes, prev, pager, next, jumper"\n' +
+                '                                    :total="totalCount">\n' +
+                '                            </el-pagination>\n' +
+                '                        </div></div>',
+            data:function(){
+                return {
+                    vloading:false,
+                    tableData:[],
+                    totalCount:0,
+                    currentPage:1,
+                    pageSize:10
+                };
+            },
+            created:function(){
+                console.log("jestmovice created");
+            },
+            methods:{
+                queryDataForPage:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/jestmovie/getAllMovieForPage";
+                    var params = "page=" + this.currentPage + "&pageSize=" + this.pageSize;
+                    axios.post(url,params).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            var page = response.data.page;
+                            self.tableData = page["dataList"];
+                            self.totalCount = page["totalCount"];
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                startGetMovie:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/jestmovie/startDownloadMovie";
+                    axios.post(url).then(function (response) {
+                        self.vloading = false;
+                        if(response && response.data && response.data.success){
+                            self.$message("后台处理中,稍后刷新页面!");
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                handleSizeChange:function(val){
+                    this.pageSize = val;
+                    this.queryDataForPage();
+                },
+                handleCurrentChange:function(val){
+                    this.currentPage = val;
+                    this.queryDataForPage();
+                },
+                deleteAllMovie:function(){
+                    var self = this;
+                    self.vloading = true;
+                    var url = "/jestmovie/deleteAllMovie";
+                    axios.post(url).then(function (response) {
+                        if(response && response.data && response.data.success){
+                            self.vloading = false;
+                            self.$message("删除成功!");
+                            self.queryDataForPage();
+                        }else{
+                            self.vloading = false;
+                            self.$message.error("删除失败!");
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                    });
+                },
+                deleteMovie:function (record) {
+                    var self = this;
+                    self.vloading = true;
+                    var movieId = record["movieId"];
+                    var url = "/jestmovie/deleteMovieById";
+                    axios({
+                        method: "post",
+                        url: url,
+                        data:this.$qs.stringify({
+                            movieId:movieId
+                        })
+                    }).then(function (response) {
+                        if(response && response.data && response.data.success){
+                            self.vloading = false;
+                            self.$message("删除成功!");
+                            self.queryDataForPage();
+                            // setTimeout(function () {
+                            //     self.vloading = false;
+                            //     self.$message("删除成功!");
+                            //     self.queryDataForPage();
+                            // },1000);
+                        }else{
+                            self.vloading = false;
+                            self.$message.error("删除失败!");
+                        }
+                    }).catch(function (error) {
+                        self.vloading = false;
+                        console.log(error);
+                        self.$message.error("删除失败!");
+                    });
+                }
+            }
+        };
+
+        var maoyan = {
+            template :'<div><el-row>\n' +
+                '                            <el-alert title="进度" type="info"\n' +
+                '                                      description="目前计划实现从猫眼电影票房上获取" show-icon>\n' +
+                '                            </el-alert>\n' +
+                '                        </el-row>\n' +
+                '                       </div>',
+            data:function(){
+                return {
+                    vloading:false,
+                    tableData:[],
+                    totalCount:0,
+                    currentPage:1,
+                    pageSize:10
+                };
+            },
+            created:function(){
+                console.log("猫眼页面加载");
+            },
+            methods:{
+
+            }
+        };
+
+
+        var routes = [
+            {path:'/',redirect:'/p1'},
+            { path: '/p1', component: movie },
+            { path: '/p2', component: maoyan },
+            { path: '/p3', component: jestmovie }
+        ];
+
+
+        var router = new VueRouter({
+            routes:routes
+        });
+
+
+        var vm = new Vue({
+            el : '#app',
+            router:router,
+            data : {
+                showlist : true,
+                actionIndex:'/p1'
+            },
+            created:function(){
+              console.log(this.$route.path);
+              this.$router.push("/p1");
+            },
+            methods : {
+                menuSelect:function(index,path){
+                    this.$router.push(index);
+                },
+                add:function(){
+                    vm.showlist = false;
+                },
+                handleSelect:function(key, keyPath){
+                    console.log(key, keyPath);
+                }
+
+            }
+        });
+    </script>
+</html>
