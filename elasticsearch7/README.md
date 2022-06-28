@@ -132,5 +132,4 @@ http://localhost:7071/
 ## 目前效果图
 1. 基于Spring Data ElasticSearch API的截图
 ![Image text](./images/t1.png)
-2. 基于Jest API的截图
-![Image text](./images/t2.png)
+

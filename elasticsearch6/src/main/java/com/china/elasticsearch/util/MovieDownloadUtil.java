@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class MovieDownloadUtil {
 
-   public static final String ROOT_URL =  "http://www.8080s.net";
+    public static final String ROOT_URL =  "http://www.kk80s.com";
 
     public static final String BASIC_URL = ROOT_URL + "/movie/list/-----p";
 
