@@ -2,7 +2,7 @@
 
 ## 项目描述
 基于Docker环境运行的ElasticSearch7.17.4,目前项目中集成了2种与ElasticSearch交互的API:
-1. 使用Spring Data ElasticSearch 4.2.5,需使用ES API为7.12.1
+1. 使用Spring Data ElasticSearch 4.2.5,需使用ES API为7.17.4
 3. 使用Jest API 6.3.1
 
 项目暂时未使用脚手架的方式开发Vue前端界面,采用了原始的方式进行开发
@@ -14,7 +14,7 @@
 3. Spring 5.3.10
 4. Tomcat 9.0.53
 5. Docker 20.10
-6. ElasticSearch API 7.12.1
+6. ElasticSearch API 7.17.4
 7. Spring Data ElasticSearch 4.2.5
 8. Jest API 6.3.1
 9. Vue2.6 + Vue Router + Element UI 2.11.1 + Axios + Qs
@@ -131,6 +131,5 @@ http://localhost:7071/
 ````
 ## 目前效果图
 1. 基于Spring Data ElasticSearch API的截图
-![Image text](./images/t1.png)
-2. 基于Jest API的截图
-![Image text](./images/t2.png)
+![Image text](./elasticsearch7/images/t1.png)
+

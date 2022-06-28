@@ -44,19 +44,19 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>7.12.1</version>
+            <version>7.17.4</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.elasticsearch</groupId>-->
-<!--            <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
-<!--            <version>7.17.4</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.17.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>7.12.1</version>
+            <version>7.17.4</version>
         </dependency>
 <!--        &lt;!&ndash;以下为依赖需要一致的&ndash;&gt;-->
 <!--        <dependency>-->
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.elasticsearch.plugin</groupId>
             <artifactId>transport-netty4-client</artifactId>
-            <version>7.12.1</version>
+            <version>7.17.4</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
